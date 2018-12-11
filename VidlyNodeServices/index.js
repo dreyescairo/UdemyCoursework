@@ -1,9 +1,30 @@
 const Joi = require("joi");
+const logger = require("./logger");
 const express = require("express");
-
+const helmet = require("helmet");
+const morgan = require("morgan");
 let app = express();
 
+//process.env.NODE_ENV = 'production';
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+//get the env using app
+console.log(`app: ${app.get("env")}`);
+
+//**MIDDLEWARE**//
+//parse body of request
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); //URL encoded payload ie: key=value&key=value (allows key value pairs to be sent in the body)
+app.use(express.static("public")); //all static files will be served from the public folder
+app.use(helmet());
+
+if (app.get("env") === "development") {
+  //morgan loggs all http requests to the console by default
+  app.use(morgan("tiny"));
+  console.log("Morgan enabled...");
+}
+
+//custom midleware example from logger.js
+app.use(logger);
 
 //Genres API. Assuming we will move this later//
 
