@@ -1,6 +1,3 @@
 {
-  "__comment:": "this is where all app secrets go. below, passowrd is simply mapped to my env variable named 'app_password'. this is setup for use with config module",
-  "mail": {
-    "password": "app_password"
-  }
+  "password": "app_password"
 }

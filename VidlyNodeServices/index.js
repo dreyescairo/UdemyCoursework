@@ -1,13 +1,4 @@
-//I rely on these to be set. set them at the very beginning here for now.
-//maybe use dotenv to keep track of these locally
-process.env.APP_PASSWORD = 1234;
-process.env.NODE_ENV = 'development';
-process.env.DEBUG = 'app:startup';
-
-const startupDebugger = require('debug')('app:startup');//app:startup is the value of the env variable DEBUG.
-const dbDebugger = require('debug')('app:db');
-
-const config = require('config'); //the config module for handling different dev environments.
+const config = require("config");
 const Joi = require("joi");
 const logger = require("./logger");
 const express = require("express");
@@ -15,17 +6,10 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 let app = express();
 
-
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-//get the env using app
-console.log(`app: ${app.get("env")}`);
-
-//configuration
-//the properties we are getting come from the file in the config folder based on the env variable. ie: if development it will read from development.json
-console.log(`Application Name: ${config.get('name')}`);//use config.get() to get the value of a property by name. these properties come from the config folder
-console.log(`Mail Server: ${config.get('mail.host')}`);//use config.get() to get the value of a property by name. these properties come from the config folder
-
-console.log(`Mail Server Password: ${config.get('mail.password')}`);//use config.get() to get the value of a property by name. these properties come from the config folder
+//process.env.NODE_ENV = 'production';
+// console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+// //get the env using app
+// console.log(`app: ${app.get("env")}`);
 
 //**MIDDLEWARE**//
 //parse body of request
@@ -34,14 +18,16 @@ app.use(express.urlencoded({ extended: true })); //URL encoded payload ie: key=v
 app.use(express.static("public")); //all static files will be served from the public folder
 app.use(helmet());
 
+//configuration TODO: Seems buggy. switch to dotenv instead...
+console.log("Application Name: " + config.get("name"));
+console.log("Mail Server: " + config.get("mail.host"));
+//console.log("Mail Password: " + config.get("password"));
+
 if (app.get("env") === "development") {
   //morgan loggs all http requests to the console by default
   app.use(morgan("tiny"));
-  startupDebugger("Morgan enabled...");
+  console.log("Morgan enabled...");
 }
-
-//example of using dbDebugger for dbwork
-dbDebugger('connected to the database...');
 
 //custom midleware example from logger.js
 app.use(logger);
